@@ -1,65 +1,50 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, SafeAreaView, TouchableOpacity, FlatList, ScrollView} from 'react-native';
+import { StyleSheet, Text, View, TextInput, SafeAreaView, TouchableOpacity, FlatList, ScrollView } from 'react-native';
 
 export default function App() {
 
-  const [number1, onChangeNumber1] = useState('0');
-  const [number2, onChangeNumber2] = useState('0');
-  const [result, setResult] = useState(0);
-  const [text, setText] = useState("");
-  const [data, setData] = useState([]);
+  const [item, setItem] = useState('');
+  const [shoppingList, setShoppingList] = useState([]);
 
-
-  const addNumbers = () => {
-    const sum = parseInt(number1) + parseInt(number2);
-    setResult(sum)
-    setData([...data, { key: `${number1} + ${number2} = ${sum}` }]);
-    setText('');
+  const addItem = () => {
+    if (item.trim() !== '') {
+      setShoppingList([...shoppingList, item]);
+      setItem('');
+    }
   };
 
-  const minNumbers = () => {
-    const diff = number1 - number2;
-    setResult(diff)
-    setData([...data, { key: `${number1} - ${number2} = ${diff}` }]);
-    setText('');
+  const clearList = () => {
+    setShoppingList([]);
   };
 
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.inputContainer}>
-      <Text style={styles.baseText}>Result: {result}</Text>
+        <Text style={styles.baseText}>Shopping List</Text>
         <TextInput
           style={styles.input}
-          value={number1}
-          onChangeText={onChangeNumber1}
-          placeholder="Numero 1"
-          keyboardType="numeric"
-        />
-        <TextInput
-          style={styles.input}
-          value={number2}
-          onChangeText={onChangeNumber2}
-          placeholder="Numero 2"
-          keyboardType="numeric"
+          value={item}
+          onChangeText={setItem}
+          placeholder="Enter item"
         />
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={addNumbers}>
-            <Text style={styles.buttonText}>+</Text>
+          <TouchableOpacity style={styles.button} onPress={addItem}>
+            <Text style={styles.buttonText}>Add</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={minNumbers}>
-            <Text style={styles.buttonText}>-</Text>
+          <TouchableOpacity style={styles.button} onPress={clearList}>
+            <Text style={styles.buttonText}>Clear</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.flatListContainer}>
-        <Text style={styles.baseText}>History</Text>
-        <ScrollView>
-          <FlatList
-            data={data}
-            renderItem={({ item }) => <Text style={styles.baseText}>{item.key}</Text>}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        </ScrollView>
+          <Text style={styles.baseText}>Items:</Text>
+          <ScrollView>
+            <FlatList
+              data={shoppingList}
+              renderItem={({ item }) => <Text style={styles.baseText}>{item}</Text>}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </ScrollView>
         </View>
       </SafeAreaView>
       <StatusBar style="auto" />
@@ -67,15 +52,12 @@ export default function App() {
   );
 }
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'flex-start',
   },
-  topHalf: {
-    flex: 1,
-    justifyContent: 'flex-start', // Align content at the top
+  inputContainer: {
     paddingHorizontal: 20,
   },
   input: {
